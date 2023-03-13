@@ -4,4 +4,4 @@ Integrantes:
     Daniel A. De la Cruz
     Carlos Otero Sánchez
     Adrian Vázquez
-![alt tex(https://i.ytimg.com/vi/YPSoFfMSTTs/maxresdefault.jpg)
+![alt text(https://i.ytimg.com/vi/YPSoFfMSTTs/maxresdefault.jpg)
