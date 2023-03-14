@@ -4,8 +4,8 @@ int client_n = 0;
 int client_list[MAX_CONN];
 
 uint8_t buff_tx[BUFFER];
-uint8_t buff_rx[BUFFER];
-pthread_mutex_t request_mutex;
+uint8_t buff_rx[MAX_CONN][BUFFER];
+int i, test_send;
 
 // variables de prueba
 
@@ -13,44 +13,60 @@ void *lupe(void *param);
 
 void *lupe(void *param)
 {
-    int i, test_send, test_recv;
+    // ncurses.h
+    initscr();
+    noecho();
+    cbreak();
 
     while(1) {
-        clear_screen();
-        printf("\n\n[SERVER]: Clientes conectados %d\n", client_n);
+        clear();
+        printw("[SERVER]: Clientes conectados %d\n\n", client_n);
+        // Itera la lista de clientes
         for (i = 0; i < MAX_CONN; i++) {
             if (client_list[i] <= 0) {
                 continue;
             } else {
-                printf("\t\tCliente %d\tfd %d\n\n\n", client_n, client_list[i]);
-                test_send = send(client_list[i], buff_tx, sizeof(buff_rx), 0);
+                printw("\t[CLIENTE %d]: fd %d\tframe [%d:%d:%d]\t", client_n, client_list[i], buff_rx[i][0], buff_rx[i][1], buff_rx[i][2]);
 
+                // comprueba conexion
+                test_send = send(client_list[i], buff_tx, sizeof(buff_tx), 0);
+                // El cliente no recibio el mensaje
                 if (test_send < 0) {
                     close(client_list[i]);
-                    printf("[CLIENT %d]: desconectado\n", client_list[i]);
+                    printw("desconectado\n", client_list[i]);
                     client_list[i] = 0;
                     client_n--;
+                
+                // el cliente recibio el mensaje
                 } else if (test_send > 0) {
-                    test_recv = recv(client_list[i], buff_rx, sizeof(buff_rx), 0);
-                    // printf("test_recv %d", test_send);
-                    // leer_frame(buff_rx);
-
-                    if(buff_rx[2] == 0x00) {
-                        printf("[CLIENT %d]: %d %d\t",client_list[i], buff_rx[0], buff_rx[1]);
-                        leer_frame(buff_rx);
-                    } else if (buff_rx[2] == 0xFF) {
-                        crear_frame(buff_tx, SOF, MOTORES, KILL_CONN);
-                        send(client_list[i], buff_tx, sizeof(buff_rx), 0);
+                    recv(client_list[i], buff_rx[i], sizeof(buff_rx[i]), 0);
+                    if (buff_rx[i][1] < KILL_CONN) {
+                        if(buff_rx[i][1] == MOTORES) {
+                            printw("MOTORES %d\n", buff_rx[i][2]);
+                        } else if(buff_rx[i][1] == CAÑON) {
+                            printw("CAÑON %d\n", buff_rx[i][2]);
+                        } else if(buff_rx[i][1] == KEEP_CONN) {
+                            printw("KEEP_CONN %d\n", buff_rx[i][2]);
+                        }
+                    } else {
+                        printw("desconectado\n", client_list[i]);
+                        crear_frame(buff_tx, SOF, KILL_CONN, KILL_CONN);
+                        send(client_list[i], buff_tx, sizeof(buff_tx), 0);
                         close(client_list[i]);
-                        printf("[CLIENT %d]: desconectado\n", client_list[i]);
                         client_list[i] = 0;
                         client_n--;
+                        endwin();
+                        exit(1);
                     }
                 }
             }
         }
-        sleep(1);
+        refresh();
+        // sleep(1);
     }
+    
+    endwin();
+    exit(1);
 }
 
 int main() {

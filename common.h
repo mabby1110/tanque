@@ -22,7 +22,7 @@
 
 #define clear_screen() printf("\033[H\033[J")
 #define PORT 8080
-#define IP "192.168.68.114"
+#define IP "192.168.43.231"
 #define BUFFER 4
 #define MAX_CONN 2
 
@@ -32,11 +32,10 @@
 // modulos
 #define MOTORES 0x10
 #define CAÑON 0x20
-#define CONN 0x30
-
-// acciones
 #define KEEP_CONN 0x00
 #define KILL_CONN 0xFF
+
+// acciones
 #define G_IZQ 0X11
 #define G_DER 0X12
 #define AVANZAR 0X13
