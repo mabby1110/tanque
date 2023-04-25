@@ -5,7 +5,7 @@ import getch
 import time
 
 # hyperparametros
-MODO = False             # True: RC   False: Sigue lineas
+MODO = True             # True: RC   False: Sigue lineas
 
 # GPIO Motores
 ena = 5                 # Motores
@@ -43,7 +43,7 @@ def Control_vel(a, b):
 # Funciones que controlan el movimiento de los motores
 def Avanzar():
     print('Avanzando ...')
-    Control_vel(20, 20)
+    Control_vel(50, 50)
     # motor 1
     GPIO.output(inx[0], False)
     GPIO.output(inx[1], True)
@@ -54,18 +54,7 @@ def Avanzar():
 
 def Girar_der():
     print('girando der ...')
-    Control_vel(20, 20)
-    # motor 1
-    GPIO.output(inx[0], False)
-    GPIO.output(inx[1], True)
-
-    # motor 2
-    GPIO.output(inx[2], False)
-    GPIO.output(inx[3], True)
-
-def Girar_izq():
-    print('girando izq ...')
-    Control_vel(20, 20)
+    Control_vel(10, 30)
     # motor 1
     GPIO.output(inx[0], True)
     GPIO.output(inx[1], False)
@@ -73,6 +62,17 @@ def Girar_izq():
     # motor 2
     GPIO.output(inx[2], True)
     GPIO.output(inx[3], False)
+
+def Girar_izq():
+    print('girando izq ...')
+    Control_vel(30, 10)
+    # motor 1
+    GPIO.output(inx[0], False)
+    GPIO.output(inx[1], True)
+
+    # motor 2
+    GPIO.output(inx[2], False)
+    GPIO.output(inx[3], True)
 
 def Frenar():
     print('Frenando ...')
